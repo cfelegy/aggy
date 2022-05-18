@@ -14,5 +14,4 @@ class App extends React.Component<IAppProps, IAppState> {
 
 export interface IAppProps {}
 export interface IAppState {}
-
 export default App;

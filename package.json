@@ -2,7 +2,7 @@
   "name": "aggy",
   "scripts": {
     "build": "webpack",
-    "serve": "webpack serve --hot"
+    "watch": "webpack serve"
   },
   "dependencies": {
     "@types/react": "^18.0.9",

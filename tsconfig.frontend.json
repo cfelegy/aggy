@@ -1,11 +1,12 @@
 {
     "compilerOptions": {
-        "outDir": "./public/js/",
+        "outDir": "./public/dist/",
+        "sourceMap": true,
         "noImplicitAny": true,
         "module": "es6",
         "moduleResolution": "node",
         "target": "es5",
-        "jsx": "react-jsx",
+        "jsx": "react",
         "allowSyntheticDefaultImports": true,
         "lib": [
             "es2015", "dom"

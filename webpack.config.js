@@ -1,15 +1,17 @@
 const path = require('path');
 
 const config = {
+    cache: false,
     mode: process.env.NODE_ENV || 'development',
     entry: './src/frontend/index.tsx',
     devtool: 'inline-source-map',
     devServer: {
+        compress: true,
         static: {
             directory: path.join(__dirname, 'public')
         },
-        compress: true,
-        port: 3000
+        port: 3000,
+        watchFiles: ['src/frontend/**/*']
     },
     module: {
         rules: [
@@ -32,7 +34,8 @@ const config = {
     },
     output: {
         filename: 'app.js',
-        path: path.resolve(__dirname, 'public/js')
+        path: path.resolve(__dirname, 'public/dist'),
+        publicPath: '/dist/'
     }
 };
 
