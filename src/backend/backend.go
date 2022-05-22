@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	log "github.com/sirupsen/logrus"
 )
 
 func Start() {
@@ -13,19 +14,20 @@ func Start() {
 	r.HandleFunc("/", index)
 	r.HandleFunc("/{providerId}/{id}", item)
 
+	AddMiddleware(r)
+
 	srv := http.Server{
 		Addr:    "0.0.0.0:4000", // TODO: from configuration
 		Handler: r,
 	}
 	err := srv.ListenAndServe() // TODO: use TLS
 	if err != nil {
-		// TODO: report error
-		panic(err)
+		log.WithError(err).Panicln("web server failed")
 	}
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
-	println("/")
+	panic("not implemented!")
 }
 
 func item(w http.ResponseWriter, r *http.Request) {
@@ -33,7 +35,6 @@ func item(w http.ResponseWriter, r *http.Request) {
 	var ok bool
 	var id, categoryId string
 	if categoryId, ok = vars["providerId"]; !ok {
-
 		// TODO: error
 		return
 	}
@@ -41,5 +42,7 @@ func item(w http.ResponseWriter, r *http.Request) {
 		// TODO: error
 		return
 	}
-	println(categoryId, id)
+	_ = id
+	_ = categoryId
+	panic("not implemented!")
 }
