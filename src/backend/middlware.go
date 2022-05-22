@@ -1,6 +1,8 @@
 package backend
 
 import (
+	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -17,13 +19,29 @@ func middlewareRecover(next http.Handler) http.Handler {
 		defer func() {
 			if err := recover(); err != nil {
 				if errorErr, ok := err.(error); ok {
-					log.WithError(errorErr).Errorln("recovered error from request")
+					log.WithError(errorErr).
+						Errorln("recovered error from request")
 				} else {
-					log.WithField("recovered", err).Errorln("recovered from request")
+					log.WithField("recovered", err).
+						Errorln("recovered from request")
 				}
 
 				w.WriteHeader(http.StatusInternalServerError)
-				// TODO: write a JSON body containing the reason
+
+				body := make(map[string]any)
+				body["code"] = 500
+				body["reason"] = fmt.Sprint(err)
+				b, err := json.Marshal(body)
+				if err != nil {
+					log.WithError(err).
+						Errorln("failed to marshal error for writing")
+					return
+				}
+				_, err = w.Write(b)
+				if err != nil {
+					log.WithError(err).
+						Errorln("failed to write error to response")
+				}
 			}
 		}()
 		next.ServeHTTP(w, r)
