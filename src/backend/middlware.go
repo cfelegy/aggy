@@ -73,11 +73,18 @@ func middlewareLog(next http.Handler) http.Handler {
 				w.WriteHeader(http.StatusOK)
 				code = http.StatusOK
 			}
-			log.Debugf("%s %s: %d took %dns",
+
+			var durStr string
+			dur := end.Sub(start)
+			musPart := dur.Microseconds() % 1000
+			msPart := dur.Milliseconds()
+			durStr = fmt.Sprintf("%d.%dms", msPart, musPart)
+
+			log.Debugf("%s %s: %d took %s",
 				r.Method,
 				r.URL,
 				code,
-				end.Sub(start).Nanoseconds(),
+				durStr,
 			)
 		}()
 		next.ServeHTTP(wrappedWriter, r)
