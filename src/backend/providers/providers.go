@@ -6,7 +6,8 @@ import "time"
 
 // Provider defines an interface for providers to feed data up to aggy
 type Provider interface {
-	GetItems() *[]Meta
+	GetMetas(context *Context) ([]*Meta, error)
+	Name() string
 }
 
 // Meta describes a top-level post on a provided site

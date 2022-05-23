@@ -1,11 +1,15 @@
 package backend
 
 import (
+	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 )
+
+var poller *Poller
 
 func Start() {
 	// TODO: load configuration file
@@ -15,6 +19,8 @@ func Start() {
 	r.HandleFunc("/{providerId}/{id}", item)
 
 	AddMiddleware(r)
+
+	poller = NewPoller()
 
 	srv := http.Server{
 		Addr:    "0.0.0.0:4000", // TODO: from configuration
@@ -27,7 +33,21 @@ func Start() {
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
-	panic("not implemented!")
+	metas, errors := poller.PollAllProviders()
+	if len(errors) > 0 {
+		for _, e := range errors {
+			log.WithError(e).Warnln("PollAllProviders encountered an error")
+		}
+	}
+	b, err := json.Marshal(metas)
+	if err != nil {
+		panic(fmt.Errorf("failed to marshal metas: %w", err))
+	}
+	_, err = w.Write(b)
+	if err != nil {
+		panic(fmt.Errorf("failed to write bytes: %w", err))
+	}
+	w.WriteHeader(http.StatusOK)
 }
 
 func item(w http.ResponseWriter, r *http.Request) {
