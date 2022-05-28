@@ -11,7 +11,14 @@ import (
 )
 
 func AddMiddleware(r *mux.Router) {
-	r.Use(middlewareLog, middlewareRecover)
+	r.Use(middlewareCors, middlewareLog, middlewareRecover)
+}
+
+func middlewareCors(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Add("Access-Control-Allow-Origin", "*")
+		next.ServeHTTP(w, r)
+	})
 }
 
 func middlewareRecover(next http.Handler) http.Handler {
